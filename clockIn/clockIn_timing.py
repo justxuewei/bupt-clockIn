@@ -29,6 +29,8 @@ if __name__ == '__main__':
     with open(os.path.join(os.path.dirname(__file__), "config.json"), "r") as f:
         data = json.load(f)
     for item in data:
+        # do it now
+        main(data[item])
         schedule.every().day.at(data[item]["time"]).do(main, data[item])
     while 1:
         time.sleep(1)
