@@ -8,21 +8,26 @@ import req_model
 
 
 def main(js: json):
+    last_msg = None
     for i in range(3):
         time.sleep(i * 5)
-        if js["username"] != "" and js["password"] != "":
-            msg = req_model.upload(js["username"], js["password"])
-            if msg == "":
-                print(time.strftime("%H:%M") + " " + "打卡失败！！！！")
-                req_model.push_msg(time.strftime("%H:%M") + " " + "打卡失败！！！！", js)
-            elif json.loads(msg)["m"] == "今天已经填报了" or json.loads(msg)["m"] == "操作成功":
-                msg = '{} {} AT {}'.format(js['username'], json.loads(msg)["m"], time.strftime("%H:%M"))
-                print(msg)
-                req_model.push_msg(msg, js)
-                return
-            else:
-                print(time.strftime("%H:%M") + " " + json.loads(msg)["m"])
-                req_model.push_msg(time.strftime("%H:%M") + " " + json.loads(msg)["m"], js)
+        try:
+            if js["username"] != "" and js["password"] != "":
+                msg = req_model.upload(js["username"], js["password"])
+                if msg == "":
+                    req_model.push_msg(time.strftime("%H:%M") + " " + "打卡失败: Unknown error", js)
+                elif json.loads(msg)["m"] == "今天已经填报了" or json.loads(msg)["m"] == "操作成功":
+                    msg = '{} {} AT {}'.format(js['username'], json.loads(msg)["m"], time.strftime("%H:%M"))
+                    print(msg)
+                    req_model.push_msg(msg, js)
+                    return
+                else:
+                    print(time.strftime("%H:%M") + " " + json.loads(msg)["m"])
+                    req_model.push_msg(time.strftime("%H:%M") + " " + json.loads(msg)["m"], js)
+        except Exception as e:
+            last_msg = e
+    req_model.push_msg(time.strftime("%H:%M") + " " + "打卡失败：{}".format(last_msg), js)
+            
 
 
 if __name__ == '__main__':
