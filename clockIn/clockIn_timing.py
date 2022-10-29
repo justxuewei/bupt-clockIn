@@ -15,9 +15,14 @@ def main(js: json):
             if js["username"] != "" and js["password"] != "":
                 msg = req_model.upload(js["username"], js["password"])
                 if msg == "":
-                    req_model.push_msg(time.strftime("%H:%M") + " " + "打卡失败: Unknown error", js)
-                elif json.loads(msg)["m"] == "今天已经填报了" or json.loads(msg)["m"] == "操作成功":
-                    msg = '{} {} AT {}'.format(js['username'], json.loads(msg)["m"], time.strftime("%H:%M"))
+                    req_model.push_msg("[BUPT Covid] Failed to clock in at {}: unknown error".format(time.strftime("%H:%M")), js)
+                elif json.loads(msg)["m"] == "今天已经填报了":
+                    msg = "[BUPT Covid] {} already clocked in today".format(js['username'])
+                    print(msg)
+                    req_model.push_msg(msg, js)
+                    return
+                elif json.loads(msg)["m"] == "操作成功":
+                    msg = "[BUPT Covid] Succeed to clock in for {} at {}".format(js['username'], time.strftime("%H:%M"))
                     print(msg)
                     req_model.push_msg(msg, js)
                     return
