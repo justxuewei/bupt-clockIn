@@ -90,8 +90,8 @@ def wx_pusher(msg: str, js: json):
     return res
 
 
-def server_push(msg: str, js: json):
-    server_push_url = "https://sctapi.ftqq.com/{}.send?title={}".format(js["sendKey"], msg)
+def server_push(title: str, desp: str, js: json):
+    server_push_url = "https://sctapi.ftqq.com/{}.send?title={}&desp={}".format(js["sendKey"], title, desp)
     headers = {
         "Content-Type": "application/json"
     }
@@ -99,8 +99,8 @@ def server_push(msg: str, js: json):
     return res
 
 
-def push_msg(msg: str, js: json):
+def push_msg(msg: str, js: json, desp = ""):
     if "sendKey" in js and js["sendKey"] != "":
-        return server_push(msg, js)
+        return server_push(msg, desp, js)
     if "appToken" in js and "uid" in js and js["appToken"] != "" and js["uid"] != "":
         return wx_pusher(msg, js)

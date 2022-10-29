@@ -17,21 +17,25 @@ def main(js: json):
                 if msg == "":
                     req_model.push_msg("[BUPT Covid] Failed to clock in at {}: unknown error".format(time.strftime("%H:%M")), js)
                 elif json.loads(msg)["m"] == "今天已经填报了":
-                    msg = "[BUPT Covid] {} already clocked in today".format(js['username'])
+                    title = "BUPT Covid: SUCCEED"
+                    msg = "{} already clocked in today.".format(js['username'])
                     print(msg)
-                    req_model.push_msg(msg, js)
+                    req_model.push_msg(title, js, msg)
                     return
                 elif json.loads(msg)["m"] == "操作成功":
-                    msg = "[BUPT Covid] Succeed to clock in for {} at {}".format(js['username'], time.strftime("%H:%M"))
+                    title = "BUPT Covid: SUCCEED"
+                    msg = "Succeed to clock in for {} at {}.".format(js['username'], time.strftime("%H:%M"))
                     print(msg)
-                    req_model.push_msg(msg, js)
+                    req_model.push_msg(title, js, msg)
                     return
                 else:
                     print(time.strftime("%H:%M") + " " + json.loads(msg)["m"])
                     req_model.push_msg(time.strftime("%H:%M") + " " + json.loads(msg)["m"], js)
         except Exception as e:
             last_msg = e
-    req_model.push_msg(time.strftime("%H:%M") + " " + "打卡失败：{}".format(last_msg), js)
+    title = "BUPT Covid: FAILED"
+    msg = "Failed to clock in for {}, caused by: {}.".format(js["username"], last_msg)
+    req_model.push_msg(title, js, msg)
             
 
 
